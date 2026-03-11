@@ -2,6 +2,7 @@ package mk.ukim.finki.library_app.service.domain.impl;
 
 import mk.ukim.finki.library_app.model.domain.Book;
 import mk.ukim.finki.library_app.model.domain.State;
+import mk.ukim.finki.library_app.model.exception.BookInBadConditionException;
 import mk.ukim.finki.library_app.model.exception.NoAvailableCopiesException;
 import mk.ukim.finki.library_app.model.exception.InvalidBookStateException;
 import mk.ukim.finki.library_app.repository.BookRepository;
@@ -65,6 +66,10 @@ public class BookServiceImpl implements BookService {
     @Override
     public Optional<Book> rent(Long id) {
         return bookRepository.findById(id).map(book -> {
+
+            if (book.getState() == State.BAD) {
+                throw new BookInBadConditionException(id);
+            }
 
             if (book.getAvailableCopies() <= 0) {
                 throw new NoAvailableCopiesException(id);

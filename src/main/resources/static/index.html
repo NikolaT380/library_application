@@ -134,7 +134,7 @@
 <span class="badge ${book.state === 'GOOD' ? 'bg-success' : 'bg-danger'}">${book.state}</span>
 </td>
 <td>
-<button class="btn btn-sm btn-primary" onclick="rentBook(${book.id})" ${book.availableCopies <= 0 ? 'disabled' : ''}>Rent</button>
+<button class="btn btn-sm btn-primary" onclick="rentBook(${book.id})" ${(book.availableCopies <= 0 || book.state === 'BAD') ? 'disabled title="Cannot rent: No copies or BAD condition"' : ''}>Rent</button>
 <button class="btn btn-sm btn-warning" onclick="editBook(${book.id}, '${book.name}', '${book.category}', ${book.authorId}, ${book.availableCopies}, '${book.state}')">Edit</button>
 <button class="btn btn-sm btn-danger" onclick="deleteBook(${book.id})" ${book.state === 'GOOD' ? 'disabled title="Only BAD books can be deleted"' : ''}>Delete</button>
 </td>

@@ -1,10 +1,6 @@
 package mk.ukim.finki.library_app.web.handler;
 
-import mk.ukim.finki.library_app.model.exception.AuthorNotFoundException;
-import mk.ukim.finki.library_app.model.exception.BookNotFoundException;
-import mk.ukim.finki.library_app.model.exception.CountryNotFoundException;
-import mk.ukim.finki.library_app.model.exception.InvalidBookStateException;
-import mk.ukim.finki.library_app.model.exception.NoAvailableCopiesException;
+import mk.ukim.finki.library_app.model.exception.*;
 import mk.ukim.finki.library_app.web.controller.AuthorController;
 import mk.ukim.finki.library_app.web.controller.BookController;
 import mk.ukim.finki.library_app.web.controller.CountryController;
@@ -33,4 +29,10 @@ public class BookControllerExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ApiError.of(HttpStatus.BAD_REQUEST, exception.getMessage()));
     }
+
+    @ExceptionHandler(BookInBadConditionException.class)
+    public ResponseEntity<String> handleBookInBadConditionException(BookInBadConditionException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
+    }
+
 }
