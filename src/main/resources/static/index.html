@@ -198,7 +198,7 @@
     }
 
     function rentBook(id) {
-        fetch(`${API_URL}/books/${id}/mark-as-rented`, { method: 'PUT' })
+        fetch(`${API_URL}/books/${id}/rent`, { method: 'POST' })
             .then(res => {
                 if (res.ok) loadBooks();
                 else alert("Cannot rent this book!");
