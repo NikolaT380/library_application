@@ -26,4 +26,26 @@ public class AuthorServiceImpl implements AuthorService {
     public List<Author> findAll() {
         return authorRepository.findAll();
     }
+
+    @Override
+    public Author create(Author author) {
+        return authorRepository.save(author);
+    }
+
+    @Override
+    public Optional<Author> update(Long id, Author author) {
+        return authorRepository.findById(id).map(existingAuthor -> {
+            existingAuthor.setName(author.getName());
+            existingAuthor.setSurname(author.getSurname());
+            existingAuthor.setCountry(author.getCountry());
+            return authorRepository.save(existingAuthor);
+        });
+    }
+
+    @Override
+    public Optional<Author> deleteById(Long id) {
+        Optional<Author> author = authorRepository.findById(id);
+        author.ifPresent(authorRepository::delete);
+        return author;
+    }
 }

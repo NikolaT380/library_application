@@ -3,8 +3,6 @@ package mk.ukim.finki.library_app.model.domain;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-//import mk.ukim.finki.library_app.model.domain.Category;
-//import mk.ukim.finki.library_app.model.domain.State;
 import java.time.LocalDateTime;
 
 @Entity

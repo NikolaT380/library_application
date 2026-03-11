@@ -62,7 +62,7 @@ public class BookController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // Специфично барање за лабораториската: Изнајмување книга
+
     @PostMapping("/{id}/rent")
     public ResponseEntity<DisplayBookDto> rentBook(@PathVariable Long id) {
         return bookApplicationService

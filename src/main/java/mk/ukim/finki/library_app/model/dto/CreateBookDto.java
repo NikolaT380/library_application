@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import mk.ukim.finki.library_app.model.domain.Author;
 import mk.ukim.finki.library_app.model.domain.Book;
 import mk.ukim.finki.library_app.model.domain.Category;
+import mk.ukim.finki.library_app.model.domain.State;
 
 public record CreateBookDto(
         @NotBlank(message = "A name is required.")
@@ -19,10 +20,16 @@ public record CreateBookDto(
 
         @NotNull(message = "Available copies are required.")
         @Min(value = 1, message = "The book must have at least 1 copy.")
-        Integer availableCopies
+        Integer availableCopies,
+
+        State state
 ) {
 
     public Book toBook(Author author) {
-        return new Book(name, category, author, availableCopies);
+        Book book = new Book(name, category, author, availableCopies);
+        if (state != null) {
+            book.setState(state);
+        }
+        return book;
     }
 }

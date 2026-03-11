@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System</title>
+    <!--suppress HtmlUnknownTarget -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container">
+        <a class="navbar-brand" href="#">📚 Library Admin</a>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row mb-4">
+
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0" id="formTitle">Add New Book</h5>
+                </div>
+                <div class="card-body">
+                    <form id="bookForm">
+                        <input type="hidden" id="bookId">
+
+                        <div class="mb-3">
+                            <label for="bookName">Name</label>
+                            <input type="text" id="bookName" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="bookCategory">Category</label>
+                            <select id="bookCategory" class="form-select" required>
+                                <option value="NOVEL">NOVEL</option>
+                                <option value="THRILLER">THRILLER</option>
+                                <option value="HISTORY">HISTORY</option>
+                                <option value="FANTASY">FANTASY</option>
+                                <option value="BIOGRAPHY">BIOGRAPHY</option>
+                                <option value="CLASSICS">CLASSICS</option>
+                                <option value="DRAMA">DRAMA</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="bookAuthor">Author</label>
+                            <select id="bookAuthor" class="form-select" required></select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="bookCopies">Available Copies</label>
+                            <input type="number" id="bookCopies" class="form-control" min="1" required>
+                        </div>
+
+                        <div class="mb-3" id="stateDiv" style="display: none;">
+                            <label for="bookState">State</label>
+                            <select id="bookState" class="form-select">
+                                <option value="GOOD">GOOD</option>
+                                <option value="BAD">BAD</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100" id="saveBtn">Save Book</button>
+                        <button type="button" class="btn btn-secondary w-100 mt-2" id="cancelEditBtn" style="display: none;" onclick="resetForm()">Cancel Edit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="card-title mb-0">Book Inventory</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Author</th>
+                            <th>Copies</th>
+                            <th>State</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody id="booksTableBody">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    const API_URL = 'http://localhost:8080/api';
+
+    document.addEventListener("DOMContentLoaded", () => {
+        loadAuthors();
+        loadBooks();
+    });
+
+    function loadAuthors() {
+        fetch(`${API_URL}/authors`)
+            .then(res => res.json())
+            /** @param {{id: number, name: string, surname: string}[]} data */
+            .then(data => {
+                const select = document.getElementById('bookAuthor');
+                select.innerHTML = data.map(author =>
+                    `<option value="${author.id}">${author.name} ${author.surname}</option>`
+                ).join('');
+            }).catch(err => console.error("Error loading authors", err));
+    }
+
+    function loadBooks() {
+        fetch(`${API_URL}/books`)
+            .then(res => res.json())
+            /** @param {{id: number, name: string, category: string, authorId: number, authorName: string, availableCopies: number, state: string}[]} data */
+            .then(data => {
+                const tbody = document.getElementById('booksTableBody');
+                tbody.innerHTML = data.map(book => `
+<tr>
+<td>${book.name}</td>
+<td><span class="badge bg-secondary">${book.category}</span></td>
+<td>${book.authorName}</td>
+<td><strong>${book.availableCopies}</strong></td>
+<td>
+<span class="badge ${book.state === 'GOOD' ? 'bg-success' : 'bg-danger'}">${book.state}</span>
+</td>
+<td>
+<button class="btn btn-sm btn-primary" onclick="rentBook(${book.id})" ${book.availableCopies <= 0 ? 'disabled' : ''}>Rent</button>
+<button class="btn btn-sm btn-warning" onclick="editBook(${book.id}, '${book.name}', '${book.category}', ${book.authorId}, ${book.availableCopies}, '${book.state}')">Edit</button>
+<button class="btn btn-sm btn-danger" onclick="deleteBook(${book.id})" ${book.state === 'GOOD' ? 'disabled title="Only BAD books can be deleted"' : ''}>Delete</button>
+</td>
+</tr>
+`).join('');
+            });
+    }
+
+    document.getElementById('bookForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const id = document.getElementById('bookId').value;
+        const bookData = {
+            name: document.getElementById('bookName').value,
+            category: document.getElementById('bookCategory').value,
+            authorId: document.getElementById('bookAuthor').value,
+            availableCopies: document.getElementById('bookCopies').value,
+            state: document.getElementById('bookState').value
+        };
+
+        const method = id ? 'PUT' : 'POST';
+        const url = id ? `${API_URL}/books/${id}/edit` : `${API_URL}/books/add`;
+
+        fetch(url, {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(bookData)
+        })
+            .then(response => {
+                if(response.ok) {
+                    resetForm();
+                    loadBooks();
+                } else {
+                    alert("Error saving the book!");
+                }
+            });
+    });
+
+    function editBook(id, name, category, authorId, copies, state) {
+        document.getElementById('bookId').value = id;
+        document.getElementById('bookName').value = name;
+        document.getElementById('bookCategory').value = category;
+        document.getElementById('bookAuthor').value = authorId;
+        document.getElementById('bookCopies').value = copies;
+
+        document.getElementById('stateDiv').style.display = 'block';
+        document.getElementById('bookState').value = state;
+
+        document.getElementById('formTitle').innerText = 'Edit Book';
+        document.getElementById('saveBtn').innerText = 'Update Book';
+        document.getElementById('cancelEditBtn').style.display = 'block';
+    }
+
+    function resetForm() {
+        document.getElementById('bookForm').reset();
+        document.getElementById('bookId').value = '';
+        document.getElementById('stateDiv').style.display = 'none';
+        document.getElementById('formTitle').innerText = 'Add New Book';
+        document.getElementById('saveBtn').innerText = 'Save Book';
+        document.getElementById('cancelEditBtn').style.display = 'none';
+    }
+
+    function rentBook(id) {
+        fetch(`${API_URL}/books/${id}/mark-as-rented`, { method: 'PUT' })
+            .then(res => {
+                if (res.ok) loadBooks();
+                else alert("Cannot rent this book!");
+            });
+    }
+
+    function deleteBook(id) {
+        if (confirm('Are you sure you want to delete this book?')) {
+            fetch(`${API_URL}/books/${id}/delete`, { method: 'DELETE' })
+                .then(res => {
+                    if (res.ok) loadBooks();
+                    else alert("Only books with BAD state can be deleted!");
+                });
+        }
+    }
+
+
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+
+</script>
+</body>
+</html>

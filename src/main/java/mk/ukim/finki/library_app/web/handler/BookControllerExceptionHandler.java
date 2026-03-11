@@ -2,27 +2,31 @@ package mk.ukim.finki.library_app.web.handler;
 
 import mk.ukim.finki.library_app.model.exception.AuthorNotFoundException;
 import mk.ukim.finki.library_app.model.exception.BookNotFoundException;
+import mk.ukim.finki.library_app.model.exception.CountryNotFoundException;
 import mk.ukim.finki.library_app.model.exception.InvalidBookStateException;
 import mk.ukim.finki.library_app.model.exception.NoAvailableCopiesException;
+import mk.ukim.finki.library_app.web.controller.AuthorController;
 import mk.ukim.finki.library_app.web.controller.BookController;
+import mk.ukim.finki.library_app.web.controller.CountryController;
 import mk.ukim.finki.library_app.web.dto.ApiError;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice(assignableTypes = BookController.class)
+
+@RestControllerAdvice(assignableTypes = {BookController.class, AuthorController.class, CountryController.class})
 public class BookControllerExceptionHandler {
 
-    // Грешки за непринајдени ресурси (Враќаме 404 Not Found)
-    @ExceptionHandler({AuthorNotFoundException.class, BookNotFoundException.class})
+
+    @ExceptionHandler({AuthorNotFoundException.class, BookNotFoundException.class, CountryNotFoundException.class})
     public ResponseEntity<ApiError> handleNotFound(RuntimeException exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(ApiError.of(HttpStatus.NOT_FOUND, exception.getMessage()));
     }
 
-    // Грешки за прекршување на бизнис логика (Враќаме 400 Bad Request)
+
     @ExceptionHandler({InvalidBookStateException.class, NoAvailableCopiesException.class})
     public ResponseEntity<ApiError> handleBadRequest(RuntimeException exception) {
         return ResponseEntity

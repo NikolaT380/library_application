@@ -36,11 +36,11 @@ public class BookApplicationServiceImpl implements BookApplicationService {
 
     @Override
     public DisplayBookDto create(CreateBookDto createBookDto) {
-        // Прво го наоѓаме авторот
+
         Author author = authorService.findById(createBookDto.authorId())
                 .orElseThrow(() -> new AuthorNotFoundException(createBookDto.authorId()));
 
-        // Го користиме DTO маперот за да креираме ентитет, па го зачувуваме преку domain service
+
         return DisplayBookDto.from(bookService.create(createBookDto.toBook(author)));
     }
 
