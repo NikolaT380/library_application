@@ -28,7 +28,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<Book> findAll() {
-        return bookRepository.findAll();
+        return bookRepository.findAllByOrderByIdAsc();
     }
 
     @Override
@@ -77,5 +77,10 @@ public class BookServiceImpl implements BookService {
             book.setAvailableCopies(book.getAvailableCopies() - 1);
             return bookRepository.save(book);
         });
+    }
+
+    @Override
+    public List<Book> filterBooksById(Long a, Long b) {
+        return bookRepository.findAllByIdBetween(a, b);
     }
 }

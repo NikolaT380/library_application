@@ -1,6 +1,7 @@
 package mk.ukim.finki.library_app.service.domain.impl;
 
 import mk.ukim.finki.library_app.model.domain.Country;
+import mk.ukim.finki.library_app.repository.AuthorRepository;
 import mk.ukim.finki.library_app.repository.CountryRepository;
 import mk.ukim.finki.library_app.service.domain.CountryService;
 import org.springframework.stereotype.Service;
@@ -12,9 +13,11 @@ import java.util.Optional;
 public class CountryServiceImpl implements CountryService {
 
     private final CountryRepository countryRepository;
+    private final AuthorRepository authorRepository;
 
-    public CountryServiceImpl(CountryRepository countryRepository) {
+    public CountryServiceImpl(CountryRepository countryRepository, AuthorRepository authorRepository) {
         this.countryRepository = countryRepository;
+        this.authorRepository = authorRepository;
     }
 
     @Override
@@ -24,7 +27,7 @@ public class CountryServiceImpl implements CountryService {
 
     @Override
     public List<Country> findAll() {
-        return countryRepository.findAll();
+        return countryRepository.findAllByOrderByIdAsc();
     }
 
     @Override
@@ -43,8 +46,14 @@ public class CountryServiceImpl implements CountryService {
 
     @Override
     public Optional<Country> deleteById(Long id) {
+
+        if (authorRepository.existsByCountryId(id)) {
+            throw new RuntimeException("Cannot delete country because it has associated authors.");
+        }
+
         Optional<Country> country = countryRepository.findById(id);
         country.ifPresent(countryRepository::delete);
         return country;
     }
+
 }

@@ -64,4 +64,9 @@ public class BookApplicationServiceImpl implements BookApplicationService {
         return bookService.rent(id)
                 .map(DisplayBookDto::from);
     }
+
+    @Override
+    public List<DisplayBookDto> filterBooksById(Long a, Long b) {
+        return DisplayBookDto.from(bookService.filterBooksById(a, b));
+    }
 }

@@ -17,4 +17,6 @@ public interface BookService {
     Optional<Book> deleteById(Long id);
 
     Optional<Book> rent(Long id);
+
+    List<Book> filterBooksById(Long a, Long b);
 }
