@@ -12,6 +12,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import mk.ukim.finki.library_app.model.domain.Category;
+import mk.ukim.finki.library_app.model.domain.State;
+
 @Service
 public class BookApplicationServiceImpl implements BookApplicationService {
 
@@ -68,5 +73,11 @@ public class BookApplicationServiceImpl implements BookApplicationService {
     @Override
     public List<DisplayBookDto> filterBooksById(Long a, Long b) {
         return DisplayBookDto.from(bookService.filterBooksById(a, b));
+    }
+
+    @Override
+    public Page<DisplayBookDto> searchAndFilterBooks(Category category, State state, Long authorId, Boolean hasAvailable, Pageable pageable) {
+        return bookService.searchAndFilterBooks(category, state, authorId, hasAvailable, pageable)
+                .map(DisplayBookDto::from);
     }
 }

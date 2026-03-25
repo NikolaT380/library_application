@@ -1,6 +1,7 @@
 package mk.ukim.finki.library_app.service.domain.impl;
 
 import mk.ukim.finki.library_app.model.domain.Author;
+import mk.ukim.finki.library_app.model.exception.AuthorHasBooksException;
 import mk.ukim.finki.library_app.repository.AuthorRepository;
 import mk.ukim.finki.library_app.repository.BookRepository;
 import mk.ukim.finki.library_app.service.domain.AuthorService;
@@ -50,8 +51,7 @@ public class AuthorServiceImpl implements AuthorService {
 
 
         if (bookRepository.existsByAuthorId(id)) {
-            throw new RuntimeException("Cannot delete author because there are books associated with them.");
-        }
+            throw new AuthorHasBooksException(id);        }
 
         Optional<Author> author = authorRepository.findById(id);
         author.ifPresent(authorRepository::delete);

@@ -1,7 +1,11 @@
 package mk.ukim.finki.library_app.service.application;
 
+import mk.ukim.finki.library_app.model.domain.Category;
+import mk.ukim.finki.library_app.model.domain.State;
 import mk.ukim.finki.library_app.model.dto.CreateBookDto;
 import mk.ukim.finki.library_app.model.dto.DisplayBookDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,4 +25,5 @@ public interface BookApplicationService {
 
     List<DisplayBookDto> filterBooksById(Long a, Long b);
 
+    Page<DisplayBookDto> searchAndFilterBooks(Category category, State state, Long authorId, Boolean hasAvailable, Pageable pageable);
 }

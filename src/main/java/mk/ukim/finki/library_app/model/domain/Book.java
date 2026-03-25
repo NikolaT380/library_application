@@ -13,7 +13,7 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt =  LocalDateTime.now();
 
     private LocalDateTime updatedAt;
 

@@ -1,6 +1,7 @@
 package mk.ukim.finki.library_app.service.domain.impl;
 
 import mk.ukim.finki.library_app.model.domain.Country;
+import mk.ukim.finki.library_app.model.exception.CountryHasAuthorsException;
 import mk.ukim.finki.library_app.repository.AuthorRepository;
 import mk.ukim.finki.library_app.repository.CountryRepository;
 import mk.ukim.finki.library_app.service.domain.CountryService;
@@ -48,7 +49,7 @@ public class CountryServiceImpl implements CountryService {
     public Optional<Country> deleteById(Long id) {
 
         if (authorRepository.existsByCountryId(id)) {
-            throw new RuntimeException("Cannot delete country because it has associated authors.");
+            throw new CountryHasAuthorsException(id);
         }
 
         Optional<Country> country = countryRepository.findById(id);
