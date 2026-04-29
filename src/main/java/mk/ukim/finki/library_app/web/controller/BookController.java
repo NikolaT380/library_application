@@ -14,6 +14,8 @@ import mk.ukim.finki.library_app.service.application.BookApplicationService;
 import mk.ukim.finki.library_app.service.domain.BookService;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.data.domain.Page;
@@ -23,9 +25,15 @@ import org.springframework.data.domain.Sort;
 import mk.ukim.finki.library_app.model.domain.Category;
 import mk.ukim.finki.library_app.model.domain.State;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @RestController
 @RequestMapping("/api/books")
+@CrossOrigin(origins = "http://localhost:5173")
 public class BookController {
+
+    private static final Logger log = LoggerFactory.getLogger(BookController.class);
 
     private final BookApplicationService bookApplicationService;
     private final BookService bookService;
@@ -77,10 +85,24 @@ public class BookController {
 
     @PostMapping("/{id}/rent")
     public ResponseEntity<DisplayBookDto> rentBook(@PathVariable Long id) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+
         return bookApplicationService
                 .rent(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .map(book -> {
+
+                    log.info(">>> УСПЕШНО: Корисникот [{}] ја изнајми книгата [{}] со ID: {} <<<", currentUsername, book.name(), id);
+
+                    return ResponseEntity.ok(book);
+                })
+                .orElseGet(() -> {
+
+                    log.warn("--- НЕУСПЕШНО: Корисникот [{}] се обиде да изнајми книга со ID: {}, но таа не е достапна, не постои или е оштетена! ---", currentUsername, id);
+
+                    return ResponseEntity.notFound().build();
+                });
     }
 
     @GetMapping("/filter")
