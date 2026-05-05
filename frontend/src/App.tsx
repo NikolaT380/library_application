@@ -8,31 +8,29 @@ import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import Login from './ui/pages/LoginPage/Login';
 
 const theme = createTheme({
-  palette: {
-    primary: { main: '#1976d2' },
-    background: { default: '#f5f5f5' }
-  }
+    palette: {
+        primary: { main: '#1976d2' },
+        background: { default: '#f5f5f5' }
+    }
 });
 
 function App() {
-  return (
-      <ThemeProvider theme={theme}>
-        <CssBaseline /> {}
-        <Router>
-          <Routes>
-            {}
-            <Route path="/" element={<Layout />}>
-              {}
-              <Route index element={<HomePage />} />
-              <Route path="books" element={<BooksPage />} />
-              <Route path="authors" element={<AuthorsPage />} />
-              <Route path="countries" element={<CountriesPage />} />
-                <Route path="login" element={<Login />} />
-            </Route>
-          </Routes>
-        </Router>
-      </ThemeProvider>
-  );
+    return (
+        <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <Router>
+                <Routes>
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/" element={<Layout />}>
+                        <Route index element={<HomePage />} />
+                        <Route path="books" element={<BooksPage />} />
+                        <Route path="authors" element={<AuthorsPage />} />
+                        <Route path="countries" element={<CountriesPage />} />
+                    </Route>
+                </Routes>
+            </Router>
+        </ThemeProvider>
+    );
 }
 
 export default App;

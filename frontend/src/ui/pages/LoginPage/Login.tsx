@@ -27,7 +27,7 @@ const Login = () => {
                 navigate('/books');
 
 
-                window.location.reload();
+                //window.location.reload();
             })
             .catch((err) => {
 

@@ -10,8 +10,7 @@ const BooksPage = () => {
 
     return (
         <Box>
-            <Typography variant="h4" gutterBottom fontWeight="bold" color="primary" sx={{ mb: 4 }}>
-                📖 Books Inventory
+            <Typography variant="h4" gutterBottom color="primary" sx={{ mb: 4, fontWeight: 'bold' }}>                📖 Books Inventory
             </Typography>
             <TableContainer component={Paper} elevation={3} sx={{ borderRadius: 2 }}>
                 <Table>
@@ -29,7 +28,7 @@ const BooksPage = () => {
                             <TableRow key={book.id} hover>
                                 <TableCell>{book.name}</TableCell>
                                 <TableCell>{book.category}</TableCell>
-                                <TableCell>{book.author?.name} {book.author?.surname}</TableCell>
+                                <TableCell>{book.authorName}</TableCell>
                                 <TableCell align="center">
                                     <Chip label={book.availableCopies} color={(book.availableCopies > 0 ? "success" : "error") as "success" | "error"} variant="outlined" />
                                 </TableCell>
