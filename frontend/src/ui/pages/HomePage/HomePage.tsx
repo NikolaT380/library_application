@@ -5,7 +5,7 @@ const HomePage = () => {
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 8 }}>
             <Paper elevation={3} sx={{ p: 6, textAlign: 'center', borderRadius: 4, maxWidth: 600 }}>
-                <Typography variant="h3" component="h1" gutterBottom color="primary" fontWeight="bold">
+                <Typography variant="h3" component="h1" gutterBottom color="primary" sx={{ fontWeight: 'bold' }}>
                     Welcome to Library App
                 </Typography>
                 <Typography variant="h6" color="text.secondary" sx={{ mb: 4 }}>

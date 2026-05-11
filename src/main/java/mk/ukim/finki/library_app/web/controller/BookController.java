@@ -87,8 +87,9 @@ public class BookController {
     public ResponseEntity<DisplayBookDto> rentBook(@PathVariable Long id) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUsername = authentication.getName();
-
+        String currentUsername = (authentication != null && authentication.isAuthenticated())
+                ? authentication.getName()
+                : null;
         return bookApplicationService
                 .rent(id)
                 .map(book -> {
@@ -112,13 +113,14 @@ public class BookController {
 
     @GetMapping("/search")
     public ResponseEntity<Page<DisplayBookDto>> searchBooks(
+            @RequestParam(required = false) String name,
             @RequestParam(required = false) Category category,
             @RequestParam(required = false) State state,
             @RequestParam(required = false) Long authorId,
             @RequestParam(required = false) Boolean hasAvailable,
             @ParameterObject @PageableDefault(size = 10, page = 0, sort = "name", direction = Sort.Direction.ASC) Pageable pageable) {
 
-        Page<DisplayBookDto> result = bookApplicationService.searchAndFilterBooks(category, state, authorId, hasAvailable, pageable);
+        Page<DisplayBookDto> result = bookApplicationService.searchAndFilterBooks(name,category, state, authorId, hasAvailable, pageable);
         return ResponseEntity.ok(result);
     }
 

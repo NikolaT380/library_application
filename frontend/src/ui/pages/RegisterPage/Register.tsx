@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Button, TextField, Typography, Container, Paper, Alert } from '@mui/material';
-
 import api from '../../../axios/axios';
 
-const Login = () => {
+const Register = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
@@ -14,8 +14,13 @@ const Login = () => {
         e.preventDefault();
         setError('');
 
+        if (password !== confirmPassword) {
+            setError("Лозинките не се совпаѓаат!");
+            return;
+        }
+
         try {
-            const response = await api.post('/auth/login', { username, password });
+            const response = await api.post('/auth/register', { username, password });
 
             const token = response.data.token || response.data.jwtToken;
 
@@ -23,19 +28,19 @@ const Login = () => {
                 sessionStorage.setItem('jwt_token', token);
                 navigate('/books');
             } else {
-                setError("Грешка: Не е добиен токен од серверот!");
+                navigate('/login');
             }
-        } catch (err) {
-            setError("Погрешно корисничко име или лозинка!");
+        } catch (err: any) {
+            setError(err.response?.data || "Грешка при регистрација! Можеби корисничкото име веќе постои.");
             console.error(err);
         }
     };
 
     return (
         <Container component="main" maxWidth="xs">
-            <Paper elevation={3} sx={{ mt: 8, p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <Typography component="h1" variant="h5" gutterBottom sx={{ fontWeight: 'bold' }}>
-                    Најава
+            <Paper elevation={3} sx={{ mt: 8, p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', borderRadius: 2 }}>
+                <Typography component="h1" variant="h5" gutterBottom sx={{ fontWeight: 'bold', color: 'primary.main' }}>
+                    Регистрација
                 </Typography>
 
                 {error && <Alert severity="error" sx={{ width: '100%', mb: 2 }}>{error}</Alert>}
@@ -63,21 +68,33 @@ const Login = () => {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
+                    <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        name="confirmPassword"
+                        label="Потврди Лозинка"
+                        type="password"
+                        id="confirmPassword"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                    />
                     <Button
                         type="submit"
                         fullWidth
                         variant="contained"
+                        color="success"
                         sx={{ mt: 3, mb: 2, py: 1.5, fontWeight: 'bold' }}
                     >
-                        Логирај се
+                        Регистрирај се
                     </Button>
 
-                    {/* ДОДАДЕНО: Линк кон регистрација */}
+                    {/* ДОДАДЕНО: Линк кон најава */}
                     <Box sx={{ textAlign: 'center', mt: 1 }}>
                         <Typography variant="body2">
-                            Немате профил?{' '}
-                            <Button variant="text" size="small" onClick={() => navigate('/register')} sx={{ fontWeight: 'bold' }}>
-                                Регистрирајте се
+                            Веќе имате профил?{' '}
+                            <Button variant="text" size="small" onClick={() => navigate('/login')} sx={{ fontWeight: 'bold' }}>
+                                Најавете се
                             </Button>
                         </Typography>
                     </Box>
@@ -87,4 +104,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default Register;

@@ -76,8 +76,8 @@ public class BookApplicationServiceImpl implements BookApplicationService {
     }
 
     @Override
-    public Page<DisplayBookDto> searchAndFilterBooks(Category category, State state, Long authorId, Boolean hasAvailable, Pageable pageable) {
-        return bookService.searchAndFilterBooks(category, state, authorId, hasAvailable, pageable)
+    public Page<DisplayBookDto> searchAndFilterBooks(String name, Category category, State state, Long authorId, Boolean hasAvailable, Pageable pageable) {
+        return bookService.searchAndFilterBooks(name, category, state, authorId, hasAvailable, pageable)
                 .map(DisplayBookDto::from);
     }
 }

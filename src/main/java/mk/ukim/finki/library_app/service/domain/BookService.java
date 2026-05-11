@@ -27,7 +27,7 @@ public interface BookService {
 
     List<Book> filterBooksById(Long a, Long b);
 
-    Page<Book> searchAndFilterBooks(Category category, State state, Long authorId, Boolean hasAvailable, Pageable pageable);
+    Page<Book> searchAndFilterBooks(String name, Category category, State state, Long authorId, Boolean hasAvailable, Pageable pageable);
 
     List<BookShortProjection> findAllShortProjections();
     List<BookLongProjection> findAllLongProjections();

@@ -114,7 +114,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Page<Book> searchAndFilterBooks(Category category, State state, Long authorId, Boolean hasAvailable, Pageable pageable) {
+    public Page<Book> searchAndFilterBooks(String name, Category category, State state, Long authorId, Boolean hasAvailable, Pageable pageable) {
 
         Specification<Book> spec = (root, query, cb) -> cb.conjunction();
         //Specification<Book> spec = Specification.where((Specification<Book>) null);
@@ -137,6 +137,10 @@ public class BookServiceImpl implements BookService {
             } else {
                 spec = spec.and((root, query, cb) -> cb.equal(root.get("availableCopies"), 0));
             }
+        }
+
+        if (name != null && !name.isEmpty()) {
+            spec = spec.and((root, query, cb) -> cb.like(cb.lower(root.get("name")), "%" + name.toLowerCase() + "%"));
         }
 
         return bookRepository.findAll(spec, pageable);

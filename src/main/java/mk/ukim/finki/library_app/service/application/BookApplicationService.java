@@ -25,5 +25,5 @@ public interface BookApplicationService {
 
     List<DisplayBookDto> filterBooksById(Long a, Long b);
 
-    Page<DisplayBookDto> searchAndFilterBooks(Category category, State state, Long authorId, Boolean hasAvailable, Pageable pageable);
+    Page<DisplayBookDto> searchAndFilterBooks(String name, Category category, State state, Long authorId, Boolean hasAvailable, Pageable pageable);
 }

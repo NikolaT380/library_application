@@ -9,8 +9,7 @@ const api = axios.create({
 
 api.interceptors.request.use(
     (config) => {
-
-        const token = localStorage.getItem('jwt_token');
+        const token = sessionStorage.getItem('jwt_token');
 
         if (token) {
             config.headers['Authorization'] = `Bearer ${token}`;
@@ -19,6 +18,28 @@ api.interceptors.request.use(
         return config;
     },
     (error) => {
+        return Promise.reject(error);
+    }
+);
+
+api.interceptors.response.use(
+    (response) => {
+        return response;
+    },
+    (error) => {
+        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+            console.warn("Токенот е истечен или невалиден. Ве одјавуваме...");
+
+            sessionStorage.removeItem('jwt_token');
+
+            window.location.href = '/login';
+        }
+
+        if (error.response && (error.response.status === 401 || error.response.status === 403 || error.response.status === 500)) {
+            sessionStorage.removeItem('jwt_token');
+            window.location.href = '/login';
+        }
+
         return Promise.reject(error);
     }
 );
