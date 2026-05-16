@@ -18,7 +18,7 @@ const CountriesPage = () => {
     const [openEditDialog, setOpenEditDialog] = useState(false);
     const [editingCountry, setEditingCountry] = useState<Country | null>(null);
 
-    const token = localStorage.getItem('jwt_token');
+    const token = sessionStorage.getItem('jwt_token');
     let isAdmin = false;
     if (token) {
         try {

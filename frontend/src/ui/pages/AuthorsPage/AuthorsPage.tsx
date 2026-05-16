@@ -21,7 +21,7 @@ const AuthorsPage = () => {
     const [openEditDialog, setOpenEditDialog] = useState(false);
     const [editingAuthor, setEditingAuthor] = useState<{id: number, name: string, surname: string, countryId: number | ''} | null>(null);
 
-    const token = localStorage.getItem('jwt_token');
+    const token = sessionStorage.getItem('jwt_token');
     let isAdmin = false;
     if (token) {
         try {
