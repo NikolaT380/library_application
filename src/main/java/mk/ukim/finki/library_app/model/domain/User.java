@@ -24,14 +24,18 @@ public class User implements UserDetails {
 
     private String role;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private BooksViewMode booksViewMode = BooksViewMode.ROW;
+
     public User() {}
 
     public User(String username, String password, String role) {
         this.username = username;
         this.password = password;
         this.role = role;
+        this.booksViewMode = BooksViewMode.ROW;
     }
-
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -42,6 +46,8 @@ public class User implements UserDetails {
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
 
+    public BooksViewMode getBooksViewMode() { return booksViewMode; }
+    public void setBooksViewMode(BooksViewMode booksViewMode) { this.booksViewMode = booksViewMode; }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

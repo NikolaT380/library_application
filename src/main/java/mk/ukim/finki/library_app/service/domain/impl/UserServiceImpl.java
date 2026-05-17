@@ -1,5 +1,6 @@
 package mk.ukim.finki.library_app.service.domain.impl;
 
+import mk.ukim.finki.library_app.model.domain.BooksViewMode;
 import mk.ukim.finki.library_app.model.domain.User;
 import mk.ukim.finki.library_app.repository.UserRepository;
 import mk.ukim.finki.library_app.service.domain.UserService;
@@ -38,6 +39,27 @@ public class UserServiceImpl implements UserService {
                 role != null ? role : "ROLE_USER"
         );
 
+        user.setBooksViewMode(BooksViewMode.ROW);
+
         return userRepository.save(user);
+    }
+
+    @Override
+    public BooksViewMode getBooksViewMode(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        return user.getBooksViewMode() != null ? user.getBooksViewMode() : BooksViewMode.ROW;
+    }
+
+    @Override
+    public BooksViewMode updateBooksViewMode(String username, BooksViewMode booksViewMode) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        user.setBooksViewMode(booksViewMode != null ? booksViewMode : BooksViewMode.ROW);
+        userRepository.save(user);
+
+        return user.getBooksViewMode();
     }
 }
